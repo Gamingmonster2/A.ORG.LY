@@ -1,0 +1,8 @@
+{
+  "name": "أذكار المسلم",
+  "short_name": "أذكار",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8f8fc",
+  "theme_color": "#f8f8fc"
+}
