@@ -1,3 +1,6 @@
+An expert coder. Modify the provided code based on the instructions. Maintain the existing style but implement the requested changes perfectly. Return ONLY the full updated raw code.
+
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -41,8 +44,8 @@
   <link rel="icon" id="appFavicon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>" onerror="this.href='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>'">
   <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>" onerror="this.href='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>'">
 
-  <!-- Dynamic Manifest Link -->
-  <link rel="manifest" id="dynamic-manifest">
+  <!-- Static Manifest Link -->
+  <link rel="manifest" href="manifest.json">
   
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -846,129 +849,6 @@
   </div>
 
   <script>
-    // --- PWA CONFIGURATION & DYNAMIC MANIFEST SETUP ---
-    (function() {
-      var pwaConfig = {
-        name: "الاذكار اليوميه للمسلم",
-        short_name: "الاذكار اليوميه ",
-        start_url: window.location.href,
-        display: "standalone",
-        background_color: "#ffffff",
-        theme_color: "#f8f8fc",
-        icons: [
-          {
-            src: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>",
-            sizes: "192x192",
-            type: "image/svg+xml",
-            purpose: "any maskable"
-          },
-          {
-            src: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>",
-            sizes: "512x512",
-            type: "image/svg+xml",
-            purpose: "any maskable"
-          }
-        ]
-      };
-      
-      // Generate Manifest dynamically
-      var manifestBlob = new Blob([JSON.stringify(pwaConfig)], {type: 'application/json'});
-      var manifestURL = URL.createObjectURL(manifestBlob);
-      document.getElementById('dynamic-manifest').setAttribute('href', manifestURL);
-
-      // Install Prompt Logic
-      var deferredPrompt;
-      var installTimeout;
-      var reappearTimeout;
-
-      // Custom Install UI (Simple and Clean)
-      function createInstallUI() {
-        var div = document.createElement('div');
-        div.id = 'pwa-install-prompt';
-        div.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#fff;padding:15px 25px;border-radius:50px;box-shadow:0 10px 30px rgba(0,0,0,0.2);z-index:9999;display:flex;align-items:center;gap:15px;font-family:sans-serif;direction:rtl;visibility:hidden;opacity:0;transition:all 0.5s ease; width: 90%; max-width: 400px;';
-        
-        var icon = document.createElement('img');
-        icon.src = "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>";
-        icon.style.cssText = 'width:40px;height:40px;border-radius:10px;';
-        
-        var text = document.createElement('div');
-        text.innerHTML = '<div style="font-weight:bold;font-size:14px;color:#333">تثبيت التطبيق</div><div style="font-size:11px;color:#666">احصل على تجربة أفضل</div>';
-        text.style.flex = '1';
-        
-        var btn = document.createElement('button');
-        btn.innerText = 'تثبيت';
-        btn.style.cssText = 'background:#f8f8fc;color:#fff;border:none;padding:8px 20px;border-radius:20px;font-weight:bold;cursor:pointer;font-size:13px;';
-        
-        var close = document.createElement('span');
-        close.innerHTML = '&times;';
-        close.style.cssText = 'color:#999;cursor:pointer;font-size:20px;margin-right:10px;';
-        
-        div.appendChild(icon);
-        div.appendChild(text);
-        div.appendChild(btn);
-        div.appendChild(close);
-        document.body.appendChild(div);
-
-        // Show Function
-        window.showPwaPrompt = function() {
-            div.style.visibility = 'visible';
-            div.style.opacity = '1';
-            div.style.bottom = '30px';
-        };
-
-        // Hide Function
-        window.hidePwaPrompt = function() {
-            div.style.opacity = '0';
-            div.style.bottom = '20px';
-            setTimeout(function(){ div.style.visibility = 'hidden'; }, 500);
-        };
-
-        // Install Click
-        btn.addEventListener('click', function() {
-            hidePwaPrompt();
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then(function(choiceResult) {
-                    deferredPrompt = null;
-                });
-            }
-        });
-
-        // Dismiss Click (Reappear logic)
-        close.addEventListener('click', function() {
-            hidePwaPrompt();
-            // Reappear after 7 seconds
-            reappearTimeout = setTimeout(function() {
-                if(deferredPrompt) showPwaPrompt();
-            }, 7000);
-        });
-      }
-
-      // Initialize
-      window.addEventListener('load', function() {
-          createInstallUI();
-          
-          // Service Worker Registration
-          if ('serviceWorker' in navigator) {
-            var swCode = "self.addEventListener('install', e => e.waitUntil(self.skipWaiting())); self.addEventListener('activate', e => e.waitUntil(self.clients.claim())); self.addEventListener('fetch', e => {});";
-            var swBlob = new Blob([swCode], {type: 'text/javascript'});
-            navigator.serviceWorker.register(URL.createObjectURL(swBlob));
-          }
-      });
-
-      // Capture Install Event
-      window.addEventListener('beforeinstallprompt', function(e) {
-        e.preventDefault();
-        deferredPrompt = e;
-        
-        // Show after 3 seconds
-        installTimeout = setTimeout(function() {
-            if(window.showPwaPrompt) window.showPwaPrompt();
-        }, 3000);
-      });
-
-    })();
-
     // --- DATA: Adhkar Collections ---
     const adhkarDB = {
         morning: [
@@ -981,7 +861,7 @@
             },
             {
                 title: "المعوذات",
-                text: "بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم<br>قُلْ هُوَ ٱللَّهُ أَحَدٌ، ٱللَّهُ ٱلصَّمَدُ، لَمْ يَلِدْ وَلَمْ يُولَدْ، وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ.<br><br>بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم<br>قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ، مِن شَرِّ مَا خَلَقَ، وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ، وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ، وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ.<br><br>بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم<br>قُلْ أَعُوذُ بِرَبِّ النَّاسِ، مَلِكِ النَّاسِ، إِلَهِ النَّاسِ، مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ، الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ، مِنَ الْجِنَّةِ وَ النَّاسِ.",
+                text: "بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم<br>قُلْ هُوَ ٱللَّهُ أَحَدٌ، ٱللَّهُ ٱلصَّمَدُ، لَمْ يَلِدْ وَلَمْ يُولَدْ، وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ.<br><br>بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم<br>قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ، مِن شَرِّ مَا خَلَقَ، وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ، وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ، وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ.<br><br>بِسْم. اللهِ الرَّحْمنِ الرَّحِيم<br>قُلْ أَعُوذُ بِرَبِّ النَّاسِ، مَلِكِ النَّاسِ، إِلَهِ النَّاسِ، مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ، الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ، مِنَ الْجِنَّةِ وَ النَّاسِ.",
                 en: "Surah Al-Ikhlas, Al-Falaq, An-Nas",
                 repeat: 3,
                 virtue: "تكفيك من كل شيء"
@@ -1109,14 +989,14 @@
             },
             {
                 title: "أمسينا وأمسى الملك لله",
-                text: "أَمْسَيْـنا وَأَمْسـى المـلكُ لله وَالحَمدُ لله ، لا إلهَ إلاّ اللّهُ وَحدَهُ لا شَريكَ لهُ، لهُ المُـلْكُ ولهُ الحَمْـد، وهُوَ على كلّ شَيءٍ قدير ، رَبِّ أسْـأَلُـكَ خَـيرَ ما في هـذهِ اللَّـيْلَةِ وَخَـيرَ ما بَعْـدَها ، وَأَعـوذُ بِكَ مِنْ شَـرِّ ما في هـذهِ اللَّـيْلَةِ وَشَرِّ ما بَعْـدَها ، رَبِّ أَعـوذُ بِكَ مِنَ الْكَسَـلِ وَسـوءِ الْكِـبَر ، رَبِّ أَعـوذُ بِكَ مِنْ عَـذابٍ في النّـارِ وَعَـذابٍ في القَـبْر.",
+                text: "أَمْسَيْـنا وَأَمْسـى المـلكُ لله وَالحَمدُ لله ، لا إلهَ إلاّ اللّهُ وَحدَهُ لا شَريكَ لهُ، لهُ المُـلْكُ ولهُ الحَمْـد, وهُوَ على كلّ شَيءٍ قدير ، رَبِّ أسْـأَلُـكَ خَـيرَ ما في هـذهِ اللَّـيْلَةِ وَخَـيرَ ما بَعْـدَها ، وَأَعـوذُ بِكَ مِنْ شَـرِّ ما في هـذهِ اللَّـيْلَةِ وَشَرِّ ما بَعْـدَها ، رَبِّ أَعـوذُ بِكَ مِنَ الْكَسَـلِ وَسـوءِ الْكِـبَر ، رَبِّ أَعـوذُ بِكَ مِنْ عَـذابٍ في النّـارِ وَعَـذابٍ في القَـبْر.",
                 en: "We have ended another day...",
                 repeat: 1,
                 virtue: ""
             },
             {
                 title: "اللهم بك أمسينا",
-                text: "اللّهـمَّ بِكَ أَمْسَـينا وَبِكَ أَصْـبَحْنا، وَبِكَ نَحْـيا وَبِكَ نَمُـوتُ وَإِلَـيْكَ الْمَصِيرُ.",
+                text: "اللّهُـمَّ بِكَ أَمْسَـينا وَبِكَ أَصْـبَحْنا، وَبِكَ نَحْـيا وَبِكَ نَمُـوتُ وَإِلَـيْكَ الْمَصِيرُ.",
                 en: "O Allah, by You we enter the evening...",
                 repeat: 1,
                 virtue: ""
@@ -1258,7 +1138,7 @@
             },
             {
                 title: "المعوذات",
-                text: "بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم<br>قُلْ هُوَ ٱللَّهُ أَحَدٌ، ٱللَّهُ ٱلصَّمَدُ، لَمْ يَلِدْ وَلَمْ يُولَدْ، وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ.<br><br>بِسْمِ اللهِ الرَّحْمنِ الرَّhِيم<br>قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ، مِن شَرِّ مَا خَلَقَ، وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ، وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ، وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ.<br><br>بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم<br>قُلْ أَعُوذُ بِرَبِّ النَّاسِ، مَلِكِ النَّاسِ، إِلَهِ النَّاسِ، مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ، الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ، مِنَ الْجِنَّةِ وَ النَّاسِ.",
+                text: "بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم<br>قُلْ هُوَ ٱللَّهُ أَحَدٌ، ٱللَّهُ ٱلصَّمَدُ، لَمْ يَلِدْ وَلَمْ يُولَدْ، وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ.<br><br>بِسْمِ اللهِ الرَّحْمنِ الرَّhِيم<br>قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ، مِن شَرِّ مَا خَلَقَ، وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ، وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ، وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ.<br><br>بِسْم. اللهِ الرَّحْمنِ الرَّحِيم<br>قُلْ أَعُوذُ بِرَبِّ النَّاسِ، مَلِكِ النَّاسِ، إِلَهِ النَّاسِ، مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ، الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ، مِنَ الْجِنَّةِ وَ النَّاسِ.",
                 en: "Surah Al-Ikhlas, Al-Falaq, An-Nas",
                 repeat: 3,
                 virtue: "تقرأ مرة واحدة بعد الظهر والعصر والعشاء، وثلاث مرات بعد الفجر والمغرب"
@@ -1305,56 +1185,15 @@
 
     // --- PWA LOGIC (Manifest & Service Worker & Install UI) ---
     function initPWA() {
-        const faviconUri = document.getElementById('appFavicon').href;
-        
-        // Enhanced Manifest for better Android/Chrome Integration (WebAPK)
-        const manifest = {
-            "name": "الاذكار اليوميه للمسلم",
-            "short_name": "الاذكار اليوميه ",
-            "description": "تطبيق أذكار المسلم اليومية - حصن المسلم",
-            "start_url": ".",
-            "display": "standalone",
-            "background_color": "#1a4d3a",
-            "theme_color": "#1a4d3a",
-            "orientation": "portrait",
-            "icons": [
-                {
-                    "src": faviconUri,
-                    "sizes": "192x192",
-                    "type": "image/svg+xml",
-                    "purpose": "any maskable"
-                },
-                {
-                    "src": faviconUri,
-                    "sizes": "512x512",
-                    "type": "image/svg+xml",
-                    "purpose": "any maskable"
-                }
-            ]
-        };
-        
-        const stringManifest = JSON.stringify(manifest);
-        const blobManifest = new Blob([stringManifest], {type: 'application/json'});
-        const manifestURL = URL.createObjectURL(blobManifest);
-        document.getElementById('dynamic-manifest').setAttribute('href', manifestURL);
-
-        // Register Service Worker
+        // Register Service Worker from external file
         if ('serviceWorker' in navigator) {
-            const swCode = `
-                self.addEventListener('install', (e) => {
-                    self.skipWaiting();
+            navigator.serviceWorker.register('/sw.js')
+                .then((reg) => {
+                    console.log('Service Worker registered successfully:', reg);
+                })
+                .catch((err) => {
+                    console.warn('Service Worker registration failed:', err);
                 });
-                self.addEventListener('activate', (e) => {
-                    e.waitUntil(self.clients.claim());
-                });
-                self.addEventListener('fetch', (e) => {});
-            `;
-            const blobSW = new Blob([swCode], {type: 'text/javascript'});
-            const swURL = URL.createObjectURL(blobSW);
-            
-            navigator.serviceWorker.register(swURL)
-                .then((reg) => console.log('SW Registered', reg))
-                .catch(err => console.error('SW Fail', err));
         }
 
         // Handle Install Banner Logic
